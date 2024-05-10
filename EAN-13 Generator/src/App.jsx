@@ -13,7 +13,13 @@ function App() {
   };
 
   const handleWeightChange = (event) => {
-    setWeight(event.target.value);
+    const value = event.target.value;
+    if (value.length <= 5 || /^\d{0,5}$/.test(value)) {
+      setWeight(value);
+      setErrorMessage(""); // Clear any existing error message
+    } else {
+      setErrorMessage("Weight should not exceed 5 digits.");
+    }
   };
 
   const generateChecksums = () => {
@@ -22,9 +28,9 @@ function App() {
       .filter((barcode) => barcode.trim() !== "");
     const validBarcodes = [];
     for (const barcode of barcodes) {
-      if (!/^\d{12}$/.test(barcode)) {
+      if (!/^(21\d{10})(-\w+)?$/.test(barcode)) {
         setErrorMessage(
-          `Invalid barcode: ${barcode}. Barcode must be exactly 12 digits.`
+          `Invalid barcode: ${barcode}. Barcode must start with '21' followed by exactly 10 digits and optionally a product name separated by a dash.`
         );
         return;
       }
